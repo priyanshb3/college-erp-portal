@@ -1,0 +1,124 @@
+# Complete AI Agent Specification - College ERP Operating System
+> Exhaustive technical documentation and machine-readable interaction guide for LLMs, autonomous agents, and tool-use clients.
+
+## 1. System Architecture
+- **Backend**: FastAPI (Python 3.11+ / 3.13+) with SQLAlchemy ORM and Pydantic v2 schemas.
+- **Frontend**: React 18 with TypeScript, Vite, Tailwind CSS, and Lucide icons.
+- **Database**: SQLite (relational schema: Users, Courses, CourseEnrollments, ScheduleItems, AttendanceRecords, Assessments, GradeRecords, Assignments, Submissions, Appointments, Slots, Notifications, AcademicEvents).
+- **Authentication**: JWT Bearer tokens with strict role-based access control.
+
+## 2. Role Hierarchy & Permissions
+1. **ADMIN**:
+   - Access level: Full system oversight.
+   - Guard dependency: `require_admin`.
+   - Capabilities: Institutional analytics, faculty workload monitoring, course creation, student enrollment, faculty onboarding.
+2. **FACULTY**:
+   - Access level: Course-level and authorized student interactions.
+   - Guard dependency: `require_faculty_or_admin`.
+   - Capabilities: Manage course gradebook matrix, mark schedule-linked attendance, publish assignments, review submissions, manage office-hour slots, punch faculty HR attendance.
+3. **STUDENT**:
+   - Access level: Personal academic records and authorized communications.
+   - Guard dependency: `get_current_user`.
+   - Capabilities: View attendance and risk recovery requirements, track prioritized deadlines, view academic transcript and CGPA, submit assignments, book faculty appointments, communicate with instructors.
+
+## 3. Step-by-Step Agent Workflows (Curl & Python Examples)
+
+### Scenario A: Authenticate & Retrieve Token
+```bash
+curl -X POST http://localhost:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"identifier": "priyansh@college.edu", "password": "password123"}'
+```
+Response:
+```json
+{
+  "access_token": "eyJhbGciOi...",
+  "token_type": "bearer",
+  "user": {
+    "id": 7,
+    "identifier": "22CS104",
+    "name": "Priyansh Bansal",
+    "email": "priyansh@college.edu",
+    "role": "student",
+    "department": "Computer Science & Engineering"
+  }
+}
+```
+
+### Scenario B: Student Attendance Risk & Recovery Calculation
+```bash
+curl -X GET http://localhost:8000/api/insights/attendance-risk \
+  -H "Authorization: Bearer <TOKEN>"
+```
+Response:
+```json
+[
+  {
+    "course_id": 3,
+    "course_code": "CS503",
+    "course_name": "Cloud Computing & Microservice Systems",
+    "faculty_name": "Dr. Rajesh Sharma",
+    "current_percentage": 64.3,
+    "held_classes": 14,
+    "attended_classes": 9,
+    "classes_needed_for_75": 6,
+    "classes_can_miss": 0,
+    "risk_level": "CRITICAL_DETENTION"
+  }
+]
+```
+
+### Scenario C: Faculty Action Center & Schedule-Linked Attendance
+```bash
+curl -X GET http://localhost:8000/api/insights/faculty-action-center \
+  -H "Authorization: Bearer <FACULTY_TOKEN>"
+```
+Response provides:
+- `pending_grading_count`: Number of submitted assignments waiting for grades.
+- `students_below_threshold_count`: Students across courses with <75% attendance.
+- `attendance_pending_classes_count`: Today's classes requiring attendance marking.
+- `workload`: Teaching load in hours, class count, and status (e.g. `OPTIMAL`).
+
+### Scenario D: Querying Course Gradebook Matrix
+```bash
+curl -X GET http://localhost:8000/api/gradebook/course/1 \
+  -H "Authorization: Bearer <FACULTY_TOKEN>"
+```
+Response provides course metadata, configured assessments, enrolled student score breakdown, class average, and grade distribution:
+```json
+{
+  "class_average": 92.2,
+  "highest_percentage": 95.0,
+  "lowest_percentage": 89.3,
+  "grade_distribution": {"A+": 1, "A": 1, "B+": 0, "B": 0, "C": 0, "F": 0}
+}
+```
+
+### Scenario E: Admin Institutional Analytics
+```bash
+curl -X GET http://localhost:8000/api/admin-management/institutional-analytics \
+  -H "Authorization: Bearer <ADMIN_TOKEN>"
+```
+Response provides high-level institution metrics:
+```json
+{
+  "summary": {
+    "total_students": 3,
+    "total_faculty": 5,
+    "total_courses": 5,
+    "system_status": "All Departments Operational"
+  },
+  "attendance_health": {
+    "compliance_rate": 100.0,
+    "eligible_healthy_count": 3,
+    "critical_risk_count": 0
+  },
+  "academics_and_grading": {
+    "grading_completion_rate": 66.7
+  }
+}
+```
+
+## 4. DOM Automation Guide for Browser Agents
+- Every key UI component is decorated with `data-testid` and descriptive `aria-label` attributes.
+- Use explicit CSS selectors `[data-testid="..."]` rather than fragile class-based paths.

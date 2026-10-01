@@ -1,0 +1,18 @@
+{
+  "schema_version": "v1",
+  "name_for_model": "college_erp_portal",
+  "name_for_human": "College ERP Academic Operating System",
+  "description_for_model": "University ERP system API to manage role-based academic responsibilities, schedules, attendance risk recovery, gradebooks, assignment grading, and faculty appointments.",
+  "description_for_human": "University ERP platform for faculty, students, and administrators.",
+  "auth": {
+    "type": "oauth",
+    "instructions": "Obtain JWT token via POST /api/auth/login and send in Authorization: Bearer <token> header"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "/openapi.json"
+  },
+  "logo_url": "/assets/favicon.ico",
+  "contact_email": "admin@college.edu",
+  "legal_info_url": "/llms.txt"
+}

@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Allow: /llms.txt
+Allow: /llms-full.txt
+Allow: /docs
+Allow: /openapi.json
+Allow: /sitemap.xml
+Allow: /.well-known/ai-plugin.json
+Allow: /api/agent/manifest
+Allow: /api/agent/context
+
+Sitemap: /sitemap.xml

@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[#F0F2F5] text-slate-800 antialiased selection:bg-[#6B1D2F] selection:text-white;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, .font-serif-erp {
+    font-family: 'Cinzel', 'Georgia', serif;
+  }
+}
+
+/* Custom Classic ERP Styling */
+.erp-header-gradient {
+  background: linear-gradient(135deg, #4A121E 0%, #6B1D2F 50%, #1B2A4A 100%);
+}
+
+.erp-gold-border {
+  border-bottom: 3px solid #C59B27;
+}
+
+.erp-card {
+  @apply bg-white border border-slate-200 rounded shadow-sm hover:shadow transition-shadow;
+}
+
+.erp-table-header {
+  @apply bg-[#1B2A4A] text-white text-xs font-semibold uppercase tracking-wider py-2.5 px-3 text-left;
+}
+
+.erp-table-row {
+  @apply border-b border-slate-200 text-xs hover:bg-slate-50 transition-colors;
+}
+
+/* Marquee for ERP notices */
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  animation: marquee 25s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Custom Scrollbar for Dense ERP tables */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

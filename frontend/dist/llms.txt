@@ -1,0 +1,68 @@
+# College ERP Portal - University Academic Operating System
+> An enterprise-grade, role-based university academic operating system designed for administration, faculty, and students.
+
+## System Overview
+The platform organizes higher education academic workflows across three hierarchical roles:
+- **ADMIN**: Highest system governance; oversees faculty workloads, courses, sections, student records, and institutional analytics.
+- **FACULTY**: Manages course gradebooks, schedule-linked attendance sessions, assignments, student consultations, and HR punches.
+- **STUDENT**: Tracks course attendance with smart 75% recovery formulas, prioritizes approaching deadlines, accesses academic transcripts with CGPA recomputations, and books faculty office hours.
+
+## Machine-Readable Resources
+- **Full Agent Documentation**: [/llms-full.txt](/llms-full.txt)
+- **OpenAPI 3.0 Specification**: [/openapi.json](/openapi.json)
+- **Interactive Swagger Documentation**: [/docs](/docs)
+- **JSON Agent Manifest & Selectors**: [/api/agent/manifest](/api/agent/manifest)
+- **Health Endpoint**: [/api/health](/api/health)
+
+## Authentication Protocol
+The API uses OAuth2 JWT Bearer Tokens.
+1. Authenticate via `POST /api/auth/login` with JSON payload `{"identifier": "<roll_no_or_emp_id>", "password": "<password>"}`.
+2. Receive JSON response: `{"access_token": "<jwt_token>", "token_type": "bearer", "user": {...}}`.
+3. Include header on subsequent requests: `Authorization: Bearer <jwt_token>`.
+
+### Quick Demo Personas
+- **Student**: `priyansh@college.edu` (Roll No: `22CS104`) | Password: `password123`
+- **Faculty**: `rajesh.sharma@college.edu` (Emp ID: `FAC-CS-042`) | Password: `password123`
+- **Admin / Dean**: `admin@college.edu` (Admin ID: `ADMIN-01`) | Password: `password123`
+
+## Core API Endpoints for AI Agents
+
+### 1. Smart Insights & Recommendations
+- `GET /api/insights/attendance-risk`: Calculates student attendance percentages and returns required recovery classes needed to restore >=75% compliance using formula: max(0, 3*held - 4*attended).
+- `GET /api/insights/deadline-prioritization`: Categorizes upcoming student assignments by urgency (<24h Critical, <72h High, Upcoming).
+- `GET /api/insights/faculty-recommendations?subject_query={subject}`: Returns matched faculty advisors with open consultation slots and domain specialties.
+- `GET /api/insights/faculty-action-center`: Provides faculty with real-time pending grading count, low attendance student alerts, and schedule-linked attendance requirements.
+
+### 2. Course Gradebook & Academic Transcripts
+- `GET /api/gradebook/courses`: Lists courses assigned to faculty or enrolled by student.
+- `GET /api/gradebook/course/{course_id}`: Returns complete gradebook matrix (assessments, student scores, class average, grade distribution).
+- `POST /api/gradebook/assessment`: Creates course assessment (Assignment, Quiz, Exam, Lab, Project).
+- `POST /api/gradebook/grades`: Records or updates batch student grades with automated letter grade calculation (A+, A, B+, B, C, F).
+- `GET /api/gradebook/my-grades`: Retrieves student transcript history with weighted scores and cumulative CGPA.
+
+### 3. Unified Academic Calendar
+- `GET /api/calendar/events?year={YYYY}&month={MM}&view_type={MONTH|WEEK|DAY}`: Aggregates lecture schedules, faculty appointments, assignment deadlines, exams, and institutional events.
+
+### 4. Schedule & Attendance Management
+- `GET /api/schedule/my-schedule`: Retrieves weekly timetable sessions.
+- `GET /api/attendance/course/{course_id}/roster?date={YYYY-MM-DD}`: Fetches course student roster with attendance history.
+- `POST /api/attendance/take`: Records attendance session for Course + Section + Faculty + Date + Time.
+
+### 5. Appointments & Office Hours
+- `GET /api/slots/available?faculty_id={id}`: Lists open office-hour slots for a faculty member.
+- `POST /api/appointments/request`: Requests consultation appointment (prevents double-booking).
+- `POST /api/appointments/{id}/action`: Faculty action (ACCEPT, REJECT, CANCEL, COMPLETE).
+
+### 6. Admin Ecosystem Management
+- `GET /api/admin-management/institutional-analytics`: Campus KPIs (compliance rate, grading completion rate, active courses, enrollment counts).
+- `GET /api/admin-management/faculty-workloads`: Multi-faculty workload tracking (weekly teaching hours, student headcounts, workload statuses).
+- `POST /api/admin-management/courses`: Creates course and assigns faculty.
+- `POST /api/admin-management/faculty`: Provisions new faculty profile.
+
+## Browser Automation & DOM Selectors
+For browser-based agents (Playwright, Puppeteer, Claude Computer Use):
+- **Persona Tabs**: `[data-testid="persona-tab-student"]`, `[data-testid="persona-tab-faculty"]`, `[data-testid="persona-tab-admin"]`
+- **Login Inputs**: `[data-testid="login-identifier-input"]`, `[data-testid="login-password-input"]`, `[data-testid="login-submit-button"]`
+- **Quick Login Buttons**: `[data-testid="quick-login-student"]`, `[data-testid="quick-login-faculty"]`, `[data-testid="quick-login-admin"]`
+- **Navigation Tabs**: `[data-testid="nav-dashboard"]`, `[data-testid="nav-gradebook"]`, `[data-testid="nav-calendar"]`, `[data-testid="nav-daily-schedule"]`, `[data-testid="nav-attendance"]`, `[data-testid="nav-submissions"]`, `[data-testid="nav-communication"]`, `[data-testid="nav-book"]`
+- **Header Actions**: `[data-testid="header-notifications-btn"]`, `[data-testid="header-switch-persona-btn"]`, `[data-testid="header-logout-btn"]`
